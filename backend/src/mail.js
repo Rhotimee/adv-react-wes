@@ -26,4 +26,4 @@ const makeANiceEmail = text => `
 `;
 
 exports.transport = transport;
-exports.makeANiceEmail = makeANiceEmail;
+exports.makeANiceEmail = makeANiceEmail; 
