@@ -54,7 +54,7 @@ class Items extends Component {
         <Pagination page={page}/>
       </Center>
     )
-  }
+   }
 }
 
 export default Items;
