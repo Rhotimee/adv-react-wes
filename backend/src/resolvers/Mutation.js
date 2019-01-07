@@ -3,6 +3,7 @@ const jwt  = require('jsonwebtoken');
 const { randomBytes } = require('crypto');
 const { promisify } = require('util')
 const { transport, makeANiceEmail } = require('../mail')
+const { hasPermission } = require('../utils')
 
 const Mutations = {
   async createItem(parent, args, ctx, info) {
@@ -46,9 +47,21 @@ const Mutations = {
     const item = await ctx.db.query.item({ where }, `{
       id
       title
+      user { id }
     }`)
     // 2. check if they own that item or have the permission
-    // Todo
+    if (!ctx.request.userId) {
+      throw new Error("You don't have permission to delete");
+    }
+
+    const ownsItem = item.user.id === ctx.request.userId;
+    const hasPermission = ctx.request.user.permissions.some(
+      permission => ['ADMIN','ITEMDELETE'].includes(permission)
+    );
+
+    if (!ownsItem && !hasPermission) {
+      throw new Error("You don't have permission to do that! "); 
+    }
     // 3. Delete the item
     return ctx.db.mutation.deleteItem({ where }, info);
   },
@@ -175,6 +188,32 @@ const Mutations = {
     });
     // 8. return the new user
     return updatedUser;
+  },
+  async updatePermission(parent, args, ctx, info) {
+    // 1. check if theey are logged in
+    if (!ctx.request.userId) {
+      throw new Error('You must be logged In !');
+    }
+    // 2. query the current user
+    const currentUser  = await ctx.db.query.user({
+      where: {
+        id: ctx.request.userId, 
+      }, 
+    }, info);
+    // 3. check if they have permission to do this
+    hasPermission(currentUser, ['ADMIN', 'PERMISSIONUPDATE']);
+    // 4. update the permissions
+    return ctx.db.mutation.updateUser({
+      data: {
+        permissions: {
+          // We are using set because Permission has its own enum in the dataModel
+          set: args.permissions,
+        }
+      },
+      where: {
+        id: args.userId
+      }
+    }, info);
   }
 };
 
