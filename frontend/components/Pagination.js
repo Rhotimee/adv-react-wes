@@ -25,8 +25,6 @@ const Pagination = ({page}) => {
         if (loading) return <p>Loading...</p>;
         const  { count } = data.itemsConnection.aggregate
         const pages =  Math.ceil(count / perPage);
-        console.log({page});
-
         return (
           <PaginationStyles>
             <Head>
