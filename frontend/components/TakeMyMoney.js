@@ -51,7 +51,9 @@ class TakeMyMoney extends Component {
     return (
       <User>
         {
-          ({ data: { me }}) => (
+          ({ data: { me }, loading }) => {
+            if (loading) return null;
+          return (
             <Mutation 
               mutation={CREATE_ORDER_MUTATION}
               refetchQueries={[{ query: CURRENT_USER_QUERY }]}
@@ -71,7 +73,7 @@ class TakeMyMoney extends Component {
                 </StripeCheckout>
             )}
           </Mutation>
-          )
+          )}
         }
       </User>
     )
@@ -80,3 +82,4 @@ class TakeMyMoney extends Component {
 
  
 export default TakeMyMoney;
+export { CREATE_ORDER_MUTATION }

@@ -3,7 +3,7 @@ import { Mutation } from 'react-apollo'
 import NavStyles from './styles/NavStyles';
 import User from './User';
 import Signout from './Signout'
-import { TOGGLE_CART_MUTATION } from '../components/Cart'
+import { TOGGLE_CART_MUTATION } from './Cart'
 import CartCount from './CartCount';
 import CartItem from './CartItem';
 
@@ -11,10 +11,10 @@ import CartItem from './CartItem';
 const Nav = () => (
   <User>
     {({data: { me } })=> (
-      <NavStyles>
-      <Link href="/items">
-        <a>Shop</a>
-      </Link>
+      <NavStyles data-test="nav">
+        <Link href="/items">
+          <a>Shop</a>
+        </Link>
       { me && (
         <>
           <Link href="/sell">
